@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, DoCheck } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 
@@ -12,7 +12,7 @@ interface CurrencyRate {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements DoCheck {
   currency1Amount = 0;
   currency2Amount = 0;
   currency1 = 'USD';
@@ -35,16 +35,19 @@ export class AppComponent {
       });
   }
 
-  onCurrencyChange() {
+
+onCurrencyChange() {
   this.getExchangeRate();
+  this.convertCurrency();
 }
 
+
   convertCurrency() {
-    if (this.currency1Amount && this.exchangeRate) {
-      this.currency2Amount = this.currency1Amount * this.exchangeRate;
-    } else if (this.currency2Amount && this.exchangeRate) {
-      this.currency1Amount = this.currency2Amount / this.exchangeRate;
-    }
+  if (this.currency1Amount && this.exchangeRate) {
+    this.currency2Amount = this.currency1Amount * this.exchangeRate;
+  } else if (this.currency2Amount && this.exchangeRate) {
+    this.currency1Amount = this.currency2Amount / this.exchangeRate;
+  }
     if (this.currency1Amount && this.exchangeRate) {
       if (this.currency2 === 'UAH') {
         this.currency2Amount = this.currency1Amount / this.exchangeRate;
@@ -58,5 +61,9 @@ export class AppComponent {
         this.currency1Amount = this.currency2Amount * this.exchangeRate;
       }
     }    
+  }
+
+  ngDoCheck() {
+    this.convertCurrency();
   }
 }
